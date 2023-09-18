@@ -12,7 +12,6 @@ class AlarmClock {
         this.pauseButton = document.getElementById("pause");
         this.settingsDiv = document.getElementById("settings");
         this.aOnButton = document.getElementById("aOn");
-        this.mainArea = document.getElementById("main");
         this.aMin = document.getElementById("aMin");
         this.aStd = document.getElementById("aStd");
         this.init();
@@ -88,7 +87,7 @@ class AlarmClock {
 
     setCookie(name, value) {
         var date = new Date();
-        // Set the expiration date to a date very far in the future
+        // TODO: Set the expiration date to a date very far in the future
         date.setTime(date.getTime() + (10 * 365 * 24 * 60 * 60 * 1000)); // 10 years in milliseconds
         var expires = "expires=" + date.toUTCString();
         document.cookie = name + "=" + escape(value) + ";path=/";
