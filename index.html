@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+		<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <title>Clock</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                font-size: 18vw; /* Set font size relative to viewport width */
+                text-align: center;
+                background-color: #000000;
+                user-select: none;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: sans-serif;
+                text-align: center;
+                color: #999999;
+            }
+
+            header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #333;
+                color: #ddd;
+                padding: 20px;
+            }
+
+
+
+            main {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: #555555;
+            }
+
+            footer {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #333;
+                padding: 20px;
+            }
+
+            .a-button {
+                background-color: transparent;
+                border: none;
+                margin: 0 6vw;
+                font-size: 6vw;
+                color: #fff;
+                cursor: pointer;
+            }
+
+            .a-button:focus {
+                outline: none;
+            }
+
+            .a-button:active {
+                transform: translateY(2px);
+            }
+			
+			.m-alarm {
+				font-size: 12vw;
+			}
+			
+			.a-alarm__switch {
+				float: left; 
+				padding-right: 2rem;
+			}
+			
+			.a-alarm__time {
+				float: right;
+			}
+			
+			.a-time {
+				font-size: vw;
+			}
+
+            .a-fader {
+				opacity: 0.5;
+                background-color: rgba(0, 0, 0, 0.9);
+				pointer-events: none;
+                position: absolute;
+				top:0px;
+				right:0px;
+				bottom:0px;
+				left:0px;
+                width: 100vw;
+                height: 100vh;
+            }
+			
+			.m-settings {
+				z-index: 999;
+				text-align: center;
+                background-color: rgba( 200, 200, 200, 0.99);
+				font-size: 1.2rem;
+                position: absolute;
+				top:0px;
+				right:0px;
+				bottom:0px;
+				left:0px;
+                width: 100vw;
+                height: 100vh;
+			}
+			
+			// style for settings form
+			input[type=text] {
+				font-size: inherit;
+			}
+
+			
+			@media screen and (orientation:landscape) {
+				.m-alarm-text {
+					font-size: 6vw;
+				}
+				body {
+					font-size: 11vw; 
+				}
+			}
+        </style>
+    </head>
+
+    <body>
+		<div class="m-settings" id="settings">
+			<p style="margin: 5vw;">Settings (comming soon)</p>
+			<button id="close" class="a-button">Start Clock</button>
+		</div>
+	    <div class="a-fader" id="brightnessFader"></div>
+        <header>
+            <div class="m-alarm" >
+				<div class="a-alarm__switch" style="" id="alarmOnOff">
+					<span id="aOn">Alarm: </span>
+				</div>
+				<div class="a-alarm__time" style="" id="alarmTime">
+					<span id="aStd"></span>:<span id="aMin"></span>
+				</div>
+			</div>
+        </header>
+        <main id="main">
+            <div id="timeDisplay">
+				<!-- timeDisplay: click changes the opacity of brightnessFader  -->
+                <h1 class="a-time" id="clock"></h1>
+            </div>
+        </main>
+        <footer>
+            <button class="a-button" id="play">PLAY</i></button>
+            <button class="a-button" id="pause">PAUSE</i></button>
+        </footer>
+		<div style="height: 50px"></div>
+    </body>
+    <script src="clock.js"></script>
+</html>
