@@ -41,13 +41,10 @@ constructor() {
 		var minutes = now.getMinutes();
 		var seconds = now.getSeconds();
 
-		// Format the time as a string (add leading zeros if necessary)
-		var timeString = this.formatTime(hours) + ":" + this.formatTime(minutes);
-
 		// Display the time in the "clock" element
-		document.getElementById("clock").textContent = timeString;
+		document.getElementById("clock").textContent = this.formatTime(hours) + ":" + this.formatTime(minutes);
 
-		if (hours == Number(this.alarmStd) && minutes == Number(this.alarmMin) && seconds == 0 && this.onOff == true) {
+		if (hours === Number(this.alarmStd) && minutes === Number(this.alarmMin) && seconds === 0 && this.onOff === true) {
 			this.playAudio();
 			this.isPlaying = true;
 		}
@@ -57,10 +54,10 @@ constructor() {
 		var savedaTime = this.getCookie("aTime");
 		var savedRadioUrl = this.getCookie("savedurl");
 		
-		if (savedRadioUrl == ""){
+		if (savedRadioUrl === ""){
 			savedRadioUrl="https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3?aggregator=web";
 		}
-		if (savedaTime == ""){
+		if (savedaTime === ""){
 			savedaTime = "8:50"
 		}
 		
@@ -74,6 +71,7 @@ constructor() {
 	
 	playAudio() {
 		this.audio.src = this.radioUrl;
+		// TODO: this.audio.play(); returns a promise. Can we use it to check if it's playing?
 		this.audio.play();
 		this.isPlaying = true;
 		this.playButton.style.display = "none";
@@ -139,7 +137,7 @@ constructor() {
 	}
 	
 	onOffFnc() {
-		if (this.onOff == true) {
+		if (this.onOff === true) {
 			this.onOff = false;
 			this.aOnButton.style.setProperty("text-decoration", "none");
 			this.pauseAudio();
