@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<!--
+Deprecated version, for very old devices.
+Even works on iPad 3 ( MC705DF/A)
+-->
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <title>Clock</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-size: 18vw; /* Set font size relative to viewport width */
+            text-align: center;
+            background-color: #000000;
+            user-select: none;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            color: #999999;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #333;
+            color: #ddd;
+            padding: 20px;
+        }
+
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #555555;
+        }
+
+        footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #333;
+            padding: 20px;
+        }
+
+        .a-button {
+            background-color: transparent;
+            border: none;
+            margin: 0 6vw;
+            font-size: 6vw;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .a-button:focus {
+            outline: none;
+        }
+
+        .a-button:active {
+            transform: translateY(2px);
+        }
+
+        .m-alarm {
+            font-size: 12vw;
+        }
+
+        .a-alarm__switch {
+            float: left;
+            padding-right: 2rem;
+        }
+
+        .a-alarm__time {
+            float: right;
+        }
+
+        .a-time {
+            font-size: 12vw;
+        }
+
+        .a-fader {
+            opacity: 0.5;
+            background-color: rgba(0, 0, 0, 0.9);
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .m-settings {
+            z-index: 999;
+            text-align: center;
+            background-color: rgba(200, 200, 200, 0.99);
+            font-size: 2rem;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /*  style for settings form */
+        input[type=text] {
+            font-size: inherit;
+        }
+
+        .o-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            padding: 2vh;
+            height: 30vh;
+            width: 60vw;
+            margin: auto;
+        .m-input {
+            display: flex;
+            flex-direction: column;
+            margin: 1vh;
+        }
+        }
+
+        @media screen and (orientation: landscape) {
+            .m-alarm {
+                font-size: 6vw;
+            }
+
+            body {
+                font-size: 11vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="m-settings" id="settings">
+    <form id="myForm">
+        <div  class="o-form">
+            <div class="m-input">
+                <label>Time:</label>
+                <input type="text" id="aTime" name="aTime" value="9:00">
+            </div>
+            <div class="m-input">
+                <label>Url: </label>
+                <input type="text" id="radioUrl" name="radioUrl" value="https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3?aggregator=web">
+            </div>
+            <div id="save" onclick="closeSettings()" class="a-button">Start Clock</div><span style="font-size: 8px;">0.2</span>
+        </div>
+    </form>
+</div>
+<div class="a-fader" id="brightnessFader"></div>
+<header>
+    <div class="m-alarm">
+        <div class="a-alarm__switch" id="alarmOnOff" onclick="onOffFnc()">
+            <span id="aOn">Alarm: </span>
+        </div>
+        <div class="a-alarm__time" id="alarmTime" onclick="upAlarm();">
+            <span id="aStd"></span>:<span id="aMin"></span>
+        </div>
+    </div>
+</header>
+<main id="main">
+    <div id="timeDisplay" onclick="changeBrightness();">
+        <!-- timeDisplay: click changes the opacity of brightnessFader  -->
+        <h1 class="a-time" id="clock"></h1>
+    </div>
+</main>
+<footer>
+    <button class="a-button" id="play" onclick="playAudio();">PLAY</button>
+    <button class="a-button" id="pause" onclick="pauseAudio();">PAUSE</button>
+</footer>
+</body>
+<script>
+
+
+    var   alarmMin = 50;
+    var   alarmStd = 8;
+    var   radioUrl = "https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3?aggregator=web";
+    var   opacity = 0.5;
+    var   onOff = true;
+    var   audio = new Audio();
+    var   isPlaying = false;
+    var   updateTimeInterval = 1000; // Interval in milliseconds (1 second)
+    var   playButton = document.getElementById("play");
+    var   pauseButton = document.getElementById("pause");
+    var   settingsDiv = document.getElementById("settings");
+    var   aOnButton = document.getElementById("aOn");
+
+
+
+    var   aMin = document.getElementById("aMin");
+    var   aStd = document.getElementById("aStd");
+
+
+
+    function updateTime() {
+        var now = new Date();
+
+        // Get the hours, minutes, and seconds
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+
+        // Display the time in the "clock" element
+        document.getElementById("clock").textContent = formatTime(hours) + ":" + formatTime(minutes);
+
+        if (hours === Number(alarmStd) && minutes === Number(alarmMin) && seconds === 0 && onOff === true) {
+            playAudio();
+            isPlaying = true;
+        }
+        window.scroll(0,0);
+    }
+
+
+
+    function loadCookieData() {
+        var savedaTime = getCookie("aTime");
+        var savedRadioUrl = getCookie("savedurl");
+
+        if (savedRadioUrl === "") {
+            savedRadioUrl = "https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3?aggregator=web";
+        }
+        if (savedaTime === "") {
+            savedaTime = "8:50"
+        }
+
+        document.getElementById("aTime").value = savedaTime;
+        document.getElementById("radioUrl").value =  savedRadioUrl;
+
+        alarmMin = Number(savedaTime.split(":")[1]);
+        alarmStd = Number(savedaTime.split(":")[0]);
+        radioUrl = savedRadioUrl;
+        updateAlarmTime();
+    }
+
+    function playAudio() {
+        audio.src = radioUrl;
+        // TODO: audio.play(); returns a promise. Can we use it to check if it's playing?
+        audio.play();
+        isPlaying = true;
+        playButton.style.display = "none";
+        pauseButton.style.display = "inline-block";
+    }
+
+    function pauseAudio() {
+        audio.pause();
+        isPlaying = false;
+        playButton.style.display = "inline-block";
+        pauseButton.style.display = "none";
+    }
+
+
+    function setCookie(name, value) {
+        var date = new Date();
+        // TODO: Set the expiration date to a date very far in the future
+        date.setTime(date.getTime() + (10 * 365 * 24 * 60 * 60 * 1000)); // 10 years in milliseconds
+        var expires = "expires=" + date.toUTCString();
+        document.cookie = name + "=" + escape(value) + ";path=/";
+    }
+
+    function getCookie(name) {
+        var cookies = document.cookie.split("; ");
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].split("=");
+            if (cookie[0] === name) {
+                return unescape(cookie[1]);
+            }
+        }
+        return "";
+    }
+
+
+
+
+    function updateAlarmTime() { // display the current time
+        aMin.textContent = formatTime(alarmMin);
+        aStd.textContent = alarmStd;
+    }
+
+    function upAlarm() {
+        alarmMin = alarmMin + 10;
+        if (alarmMin > 59) {
+            alarmMin = 0;
+            alarmStd = alarmStd + 1;
+            if (alarmStd > 23) {
+                alarmStd = 0;
+            }
+        }
+        pauseAudio();
+        updateAlarmTime();
+    }
+
+    function changeBrightness() {
+        // Increase the opacity by 0.30
+        opacity += 0.30;
+
+        // Reset opacity to 0.15 if it exceeds 0.9
+        if (opacity > 0.9) {
+            opacity = 0.15;
+        }
+
+        // Set the opacity of the "fader" element
+        document.getElementById("brightnessFader").style.opacity = opacity;
+    }
+
+    function onOffFnc() {
+        if (onOff === true) {
+            onOff = false;
+            aOnButton.style.setProperty("text-decoration", "none");
+            pauseAudio();
+        } else {
+            onOff = true;
+            aOnButton.style.setProperty("text-decoration", "line-through");
+        }
+    }
+
+    function closeSettings() {
+        var aTime = document.getElementById("aTime").value;
+        var radioUrl = document.getElementById("radioUrl").value;
+
+        setCookie("aTime", aTime);
+        setCookie("savedurl", radioUrl);
+        loadCookieData();
+        settingsDiv.style.display = "none";
+    }
+
+    // helpers:
+    function formatTime(timeValue) {
+        // Add a leading zero if the time value is less than 10
+        return timeValue < 10 ? "0" + timeValue : timeValue;
+    }
+
+
+    updateTime();
+    loadCookieData();
+
+
+
+    setInterval(updateTime, 1000);
+
+    // Call updateTime once to display the initial time
+    updateTime();
+
+    // hide unused Button
+    pauseButton.style.display = "none";
+    settingsDiv.style.display = "block";
+
+
+
+
+
+
+</script>
+</html>
