@@ -1,3 +1,4 @@
+
 class AlarmClock {
     constructor() {
         this.alarmMin = 50;
@@ -24,6 +25,8 @@ class AlarmClock {
         this.startUpdateInterval();
         // hide unused Button
         this.pauseButton.style.display = "none";
+        this.settingsDiv.style.display = "block";
+
     }
 
     startUpdateInterval() {
@@ -47,6 +50,7 @@ class AlarmClock {
             this.playAudio();
             this.isPlaying = true;
         }
+        window.scroll(0,0);
     }
 
     loadCookieData() {
@@ -60,7 +64,8 @@ class AlarmClock {
             savedaTime = "8:50"
         }
 
-        //TODO: manage settings via form and cookies
+        document.getElementById("aTime").value = savedaTime;
+        document.getElementById("radioUrl").value =  savedRadioUrl;
 
         this.alarmMin = Number(savedaTime.split(":")[1]);
         this.alarmStd = Number(savedaTime.split(":")[0]);
@@ -147,6 +152,12 @@ class AlarmClock {
     }
 
     closeSettings() {
+        var aTime = document.getElementById("aTime").value;
+        var radioUrl = document.getElementById("radioUrl").value;
+
+        this.setCookie("aTime", aTime);
+        this.setCookie("savedurl", radioUrl);
+        this.loadCookieData();
         this.settingsDiv.style.display = "none";
     }
 
@@ -159,6 +170,7 @@ class AlarmClock {
 
 // Create an instance of the AlarmClock class
 const alarmClock = new AlarmClock();
+
 document.getElementById("timeDisplay").addEventListener("click", function () {
     alarmClock.changeBrightness();
 });
@@ -176,6 +188,8 @@ document.getElementById("alarmOnOff").addEventListener("click", function () {
     alarmClock.onOffFnc();
 });
 
-document.getElementById("close").addEventListener("click", function () {
+document.getElementById("save").addEventListener("click", function () {
     alarmClock.closeSettings();
 });
+
+
