@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -106,7 +107,7 @@
             z-index: 999;
             text-align: center;
             background-color: rgba(200, 200, 200, 0.99);
-            font-size: 1.2rem;
+            font-size: 2rem;
             position: absolute;
             top: 0;
             right: 0;
@@ -121,6 +122,22 @@
             font-size: inherit;
         }
 
+        .o-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            padding: 2vh;
+            height: 30vh;
+            width: 60vw;
+            margin: auto;
+        }
+
+        .m-input {
+            display: flex;
+            flex-direction: column;
+            margin: 1vh;
+        }
 
         @media screen and (orientation: landscape) {
             .m-alarm {
@@ -136,16 +153,33 @@
 
 <body>
 <div class="m-settings" id="settings">
-    <p style="margin: 5vw;">Settings (coming soon)</p>
-    <button id="close" class="a-button">Start Clock</button>
+
+    <form id="myForm">
+        <div  class="o-form">
+            <div class="m-input">
+                <label>Time:</label>
+                <input type="text" id="aTime" name="aTime" value="9:00">
+            </div>
+            <div class="m-input">
+                <label>Url: </label>
+                <input type="text" id="radioUrl" name="radioUrl" value="https://st03.sslstream.dlf.de/dlf/03/128/mp3/stream.mp3?aggregator=web">
+            </div>
+
+            <div id="save" class="a-button">Start Clock</div>
+        </div>
+    </form>
+
+
+
+
 </div>
 <div class="a-fader" id="brightnessFader"></div>
 <header>
     <div class="m-alarm">
-        <div class="a-alarm__switch" style="" id="alarmOnOff">
+        <div class="a-alarm__switch" id="alarmOnOff">
             <span id="aOn">Alarm: </span>
         </div>
-        <div class="a-alarm__time" style="" id="alarmTime">
+        <div class="a-alarm__time" id="alarmTime">
             <span id="aStd"></span>:<span id="aMin"></span>
         </div>
     </div>
@@ -160,7 +194,6 @@
     <button class="a-button" id="play">PLAY</button>
     <button class="a-button" id="pause">PAUSE</button>
 </footer>
-<div style="height: 50px"></div>
 </body>
 <script src="clock.js"></script>
 </html>
